@@ -1,80 +1,58 @@
-"use client";
+"use client"
+import { useState } from "react";
 
-import React, { useState } from "react";
+const PrintLabel = () => {
+  const [status, setStatus] = useState("");
 
-const PrintPriceTag: React.FC = () => {
-  const [product] = useState<{
-    name: string;
-    price: string;
-    code: string;
-  }>({
-    name: "Plant Pot",
-    price: "25.00",
-    code: "PP001",
-  });
+  // Template ZPL untuk QR Code dan Price Tag
+  const zplData = `
+    ^XA
+    ^FO100,100
+    ^BQN,2,10
+    ^FDMM,A123456789^FS
+    ^FO100,250
+    ^A0N,50,50
+    ^FDPrice: $19.99^FS
+    ^XZ
+  `;
 
-  const printViaUSB = async () => {
+  const printLabel = async () => {
     try {
-      // Request device with appropriate filters
+      setStatus("Mencari printer...");
+      // Akses printer via WebUSB API
       const device = await navigator.usb.requestDevice({
-        filters: [{ vendorId: 0x2d37, productId: 0x83d7 }],
+        filters: [{ vendorId: 0x2d37 }], // Gantilah vendorId sesuai dengan printer Anda
       });
+      setStatus("Printer ditemukan!");
 
-      console.log("Device selected: ", device);
-
-      // Open the device
+      // Membuka koneksi dengan printer
       await device.open();
-      console.log("Device opened");
-
-      // Select configuration
       await device.selectConfiguration(1);
-      console.log("Configuration selected");
-
-      // Claim interface
       await device.claimInterface(0);
-      console.log("Interface claimed");
 
-      const zpl = `
-        ^XA
-        ^FO50,50^A0N,50,50^FDPrice Tag^FS
-        ^FO50,120^A0N,40,40^FDName: ${product.name}^FS
-        ^FO50,170^A0N,40,40^FDPrice: $${product.price}^FS
-        ^FO50,220^A0N,40,40^FDCode: ${product.code}^FS
-        ^XZ
-      `;
+      // Kirim data ZPL ke printer
+      const writer = new TextEncoder();
+      const zplArray = writer.encode(zplData);
+      await device.transferOut(1, zplArray);
+      setStatus("Perintah cetak terkirim!");
 
-      // Prepare data for transfer
-      const encoder = new TextEncoder();
-      const data = encoder.encode(zpl);
-
-      // Send the ZPL data to the USB device
-      await device.transferOut(2, data);
-      console.log("Data sent");
-
-      alert("Printed successfully!");
+      // Menutup koneksi setelah selesai
+      await device.close();
     } catch (error) {
-      console.error("Error printing:", error);
-      if (error instanceof DOMException && error.name === "SecurityError") {
-        alert(
-          "Access to the USB device was denied. Ensure you're on HTTPS and check browser permissions."
-        );
-      } else {
-        alert("Failed to print. Check the console for more details.");
-      }
+      console.error("Error mencetak label:", error);
+      setStatus(
+        "Gagal menghubungkan ke printer. Pastikan Anda memberikan izin akses ke perangkat."
+      );
     }
   };
 
   return (
     <div>
-      <h1>Print Price Tag</h1>
-      <div>
-        <p>Name: {product.name}</p>
-        <p>Price: ${product.price}</p>
-        <p>Code: {product.code}</p>
-      </div>
-      <button onClick={printViaUSB}>Print Price Tag</button>
+      <h1>Print QR Code & Price Tag</h1>
+      <button onClick={printLabel}>Cetak Label</button>
+      <p>{status}</p>
     </div>
   );
 };
 
-export default PrintPriceTag;
+export default PrintLabel;
