@@ -23,9 +23,9 @@ const PrintPriceTag: React.FC = () => {
       console.log("Device selected: ", device);
 
       // Open and claim interface on the device
-      await device.open();
-      await device.selectConfiguration(1);
-      await device.claimInterface(0);
+      // await device.open();
+      // await device.selectConfiguration(1);
+      // await device.claimInterface(0);
 
       await device
         .open()
@@ -58,7 +58,7 @@ const PrintPriceTag: React.FC = () => {
       // Send the ZPL data to the USB device
       // await device.transferOut(2, data);
       await device
-        .transferOut(1, data)
+        .transferOut(2, data)
         .then(() => console.log("Data sent"))
         .catch(console.error);
 
