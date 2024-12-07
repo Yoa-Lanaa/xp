@@ -33,7 +33,7 @@ const PrintLabel = () => {
       // Kirim data ZPL ke printer
       const writer = new TextEncoder();
       const zplArray = writer.encode(zplData);
-      await device.transferOut(1, zplArray);
+      await device.transferOut(2, zplArray);
       setStatus("Perintah cetak terkirim!");
 
       // Menutup koneksi setelah selesai
