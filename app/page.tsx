@@ -45,7 +45,7 @@ const PrintPriceTag: React.FC = () => {
 
       alert("Printed successfully!");
     } catch (error) {
-      // Log error and provide user feedback
+      
       console.error("Error printing:", error);
       if (error instanceof DOMException && error.name === "SecurityError") {
         alert(
