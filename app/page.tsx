@@ -41,7 +41,7 @@ const PrintPriceTag: React.FC = () => {
       const data = encoder.encode(zpl);
 
       // Send the ZPL data to the USB device
-      await device.transferOut(1, data);
+      await device.transferOut(2, data);
 
       alert("Printed successfully!");
     } catch (error) {
