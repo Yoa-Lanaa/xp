@@ -22,25 +22,17 @@ const PrintPriceTag: React.FC = () => {
 
       console.log("Device selected: ", device);
 
-      // Open and claim interface on the device
-      // await device.open();
-      // await device.selectConfiguration(1);
-      // await device.claimInterface(0);
+      // Open the device
+      await device.open();
+      console.log("Device opened");
 
-      await device
-        .open()
-        .then(() => console.log("Device opened"))
-        .catch(console.error);
+      // Select configuration
+      await device.selectConfiguration(1);
+      console.log("Configuration selected");
 
-      await device
-        .selectConfiguration(1)
-        .then(() => console.log("Configuration selected"))
-        .catch(console.error);
-
-      await device
-        .claimInterface(0)
-        .then(() => console.log("Interface claimed"))
-        .catch(console.error);
+      // Claim interface
+      await device.claimInterface(0);
+      console.log("Interface claimed");
 
       const zpl = `
         ^XA
@@ -56,11 +48,8 @@ const PrintPriceTag: React.FC = () => {
       const data = encoder.encode(zpl);
 
       // Send the ZPL data to the USB device
-      // await device.transferOut(2, data);
-      await device
-        .transferOut(2, data)
-        .then(() => console.log("Data sent"))
-        .catch(console.error);
+      await device.transferOut(2, data);
+      console.log("Data sent");
 
       alert("Printed successfully!");
     } catch (error) {
