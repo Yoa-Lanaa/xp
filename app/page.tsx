@@ -59,7 +59,6 @@ const PrintPriceTag: React.FC = () => {
       // await device.transferOut(2, data);
       await device
         .transferOut(2, data)
-        .transferOut(2, data)
         .then(() => console.log("Data sent"))
         .catch(console.error);
 
