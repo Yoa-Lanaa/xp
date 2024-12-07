@@ -23,9 +23,9 @@ const PrintPriceTag: React.FC = () => {
       console.log("Device selected: ", device);
 
       // Open and claim interface on the device
-      await device.open();
-      await device.selectConfiguration(1);
-      await device.claimInterface(0);
+      // await device.open();
+      // await device.selectConfiguration(1);
+      // await device.claimInterface(0);
 
       await device
         .open()
