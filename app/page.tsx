@@ -27,6 +27,21 @@ const PrintPriceTag: React.FC = () => {
       await device.selectConfiguration(1);
       await device.claimInterface(0);
 
+      await device
+        .open()
+        .then(() => console.log("Device opened"))
+        .catch(console.error);
+
+      await device
+        .selectConfiguration(1)
+        .then(() => console.log("Configuration selected"))
+        .catch(console.error);
+
+      await device
+        .claimInterface(0)
+        .then(() => console.log("Interface claimed"))
+        .catch(console.error);
+
       const zpl = `
         ^XA
         ^FO50,50^A0N,50,50^FDPrice Tag^FS
@@ -41,11 +56,14 @@ const PrintPriceTag: React.FC = () => {
       const data = encoder.encode(zpl);
 
       // Send the ZPL data to the USB device
-      await device.transferOut(2, data);
+      // await device.transferOut(2, data);
+      await device
+        .transferOut(1, data)
+        .then(() => console.log("Data sent"))
+        .catch(console.error);
 
       alert("Printed successfully!");
     } catch (error) {
-      
       console.error("Error printing:", error);
       if (error instanceof DOMException && error.name === "SecurityError") {
         alert(
